@@ -1,0 +1,62 @@
+<style>
+    #febs-chemistry-detail #chemistry-img, #febs-chemistry-detail .chemistry-info {
+        display: inline-block;
+        float: left;
+        margin-left: 15px;
+    }
+
+    #febs-chemistry-detail #chemistry-img img {
+        width: 7rem;
+        margin: 10px 10px 0 20px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    #febs-chemistry-detail #chemistry-info-wrapper {
+        margin: 0 0 1rem 0;
+        display: inline-block;
+    }
+
+    #febs-chemistry-detail .chemistry-info div {
+        margin: 10px 15px;
+        max-width: 19rem;
+    }
+
+    #febs-chemistry-detail #options-wrapper a {
+        padding: 4px 6px;
+        color: rgba(0, 0, 0, 0.65);
+        border: 1px solid #d9d9d9;
+        border-radius: 2px;
+    }
+
+    #febs-chemistry-detail #options-wrapper a:hover {
+        color: #40a9ff;
+        border-color: #40a9ff;
+    }
+
+</style>
+<div class="layui-fluid" id="febs-chemistry-detail" lay-title="试剂信息">
+    <div id="chemistry-info-wrapper">
+        <div id="chemistry-img">
+            <img alt="头像"  data-th-src="@{febs/images/avatar/}+${chemistry.avatar}">
+        </div>
+        <div class="chemistry-info">
+
+        </div>
+        <div class="chemistry-info">
+            <div><span class="layui-icon layui-icon-file"></span> 试剂名：
+                [[${#strings.defaultString(chemistry.chemistryname,'无名字信息')}]]
+            </div>
+            <div><span class="layui-icon layui-icon-fire"></span> 温度：
+                [[${#strings.defaultString(chemistry.temperature,'无温度信息')}]]
+            </div>
+            <div><span class="layui-icon layui-icon-water"></span> 湿度：
+                [[${#strings.defaultString(chemistry.humidty,'无湿度信息')}]]
+            </div>
+
+            <div><span class="layui-icon layui-icon-read"></span> 试剂简介：
+                [[${#strings.defaultString(chemistry.description,'暂无试剂介绍')}]]
+            </div>
+        </div>
+    </div>
+</div>

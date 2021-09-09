@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.UserChemistryMapper">
+    <update id="setStatusNo" parameterType="long">
+        UPDATE t_user_chemistry
+        SET STATUS = '0'
+        WHERE CHEMISTRY_ID = #{id}
+    </update>
+    <update id="setStatusOk" parameterType="long">
+        UPDATE t_user_chemistry
+        SET STATUS = '1'
+        WHERE CHEMISTRY_ID = #{id}
+    </update>
+
+    <update id="setOneStatusOk" >
+        UPDATE t_user_chemistry
+        SET STATUS = '1'
+        WHERE CHEMISTRY_ID = #{id}
+        And USER_ID = #{userId}
+    </update>
+    <select id="getAllUserId" resultType="long" >
+        SELECT DISTINCT USER_ID
+        FROM t_user_chemistry
+    </select>
+
+    <select id="getAllChemistryId" resultType="long" >
+        SELECT DISTINCT Chemistry_ID
+        FROM t_user_chemistry
+    </select>
+</mapper>

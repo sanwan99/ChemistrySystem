@@ -1,0 +1,220 @@
+<style>
+    #febs-apex-line .layui-card-header {
+        font-weight: 600;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-apex-line" lay-title="线性图表">
+    <div class="layui-row layui-col-space8 febs-container">
+
+        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-header">实验室温度图</div>
+                <div class="layui-card-body">
+                    <div id="lineChartDatalabels"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-header">实验室湿度图</div>
+                <div class="layui-card-body">
+                    <div id="lineChartDatalabels01"></div>
+                </div>
+            </div>
+        </div>
+
+<!--        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">-->
+<!--            <div class="layui-card">-->
+<!--                <div class="layui-card-header">实验室湿度图</div>-->
+<!--                <div class="layui-card-body">-->
+<!--                    <div id="syncingChart1"></div>-->
+<!--                    <div id="syncingChart2"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+</div>
+<script data-th-src="@{febs/lay/data/dataSeries.js}"></script>
+<script data-th-inline="javascript" type="text/javascript">
+    layui.use(['apexcharts', 'febs'], function () {
+        let febs = layui.febs;
+        let labinfo0=[[${labinfo0}]];
+        let labinfo1=[[${labinfo1}]];
+        let labinfo2=[[${labinfo2}]];
+        let labinfo3=[[${labinfo3}]];
+        let labinfo4=[[${labinfo4}]];
+        let labinfo5=[[${labinfo5}]];
+        let labinfo6=[[${labinfo6}]];
+
+
+
+
+
+        // --------------- lineChartDatalabels ----------------
+        let lineChartDatalabelsOptions = {
+            chart: {
+                height: 550,
+                type: 'line',
+                zoom: {
+                    enabled: false
+                },
+                toolbar: {
+                    show: false
+                }
+            },
+            colors: ['#727cf5', '#0acf97'],
+            dataLabels: {
+                enabled: true
+            },
+            stroke: {
+                width: [3, 3],
+                curve: 'smooth'
+            },
+            series: [{
+                name: '常温区',
+                data: [labinfo0.temperature, labinfo1.temperature, labinfo2.temperature, labinfo3.temperature, labinfo4.temperature, labinfo5.temperature, labinfo6.temperature]
+            }, {
+                name: '低温区',
+                data: [labinfo0.ltemperature, labinfo1.ltemperature, labinfo2.ltemperature, labinfo3.ltemperature, labinfo4.ltemperature, labinfo5.ltemperature, labinfo6.ltemperature]
+            }],
+            title: {
+                text: '日温度曲线',
+                align: 'left'
+            },
+            grid: {
+                row: {
+                    colors: ['transparent', 'transparent'],
+                    opacity: 0.2
+                },
+                borderColor: '#f1f3fa'
+            },
+            markers: {
+                style: 'inverted',
+                size: 5,
+                hover: {
+                    size: 6
+                }
+            },
+            xaxis: {
+                categories: [labinfo0.createTime, labinfo1.createTime, labinfo2.createTime, labinfo3.createTime, labinfo4.createTime, labinfo5.createTime, labinfo6.createTime]
+            },
+            yaxis: {
+                title: {
+                    text: '℃'
+                },
+                min: 0,
+                max: 40
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                floating: true,
+                offsetY: -25,
+                offsetX: -5
+            },
+            responsive: [{
+                breakpoint: 600,
+                options: {
+                    chart: {
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    legend: {
+                        show: false
+                    }
+                }
+            }]
+        };
+
+        new ApexCharts(
+            document.querySelector("#lineChartDatalabels"),
+            lineChartDatalabelsOptions
+        ).render();
+
+        // --------------- lineChartDatalabels ----------------
+        let lineChartDatalabelsOptions01 = {
+            chart: {
+                height: 550,
+                type: 'line',
+                zoom: {
+                    enabled: false
+                },
+                toolbar: {
+                    show: false
+                }
+            },
+            colors: ['rgba(9,27,21,0.64)', 'rgba(192,205,13,0.88)'],
+            dataLabels: {
+                enabled: true
+            },
+            stroke: {
+                width: [3, 3],
+                curve: 'smooth'
+            },
+            series: [{
+                name: '湿润区',
+                data: [labinfo0.humidty, labinfo1.humidty, labinfo2.humidty, labinfo3.humidty, labinfo4.humidty, labinfo5.humidty, labinfo6.humidty]
+            }, {
+                name: '干燥区',
+                data: [labinfo0.lhumidty, labinfo1.lhumidty, labinfo2.lhumidty, labinfo3.lhumidty, labinfo4.lhumidty, labinfo5.lhumidty, labinfo6.lhumidty]
+            }],
+            title: {
+                text: '日湿度曲线',
+                align: 'left'
+            },
+            grid: {
+                row: {
+                    colors: ['transparent', 'transparent'],
+                    opacity: 0.2
+                },
+                borderColor: '#f1f3fa'
+            },
+            markers: {
+                style: 'inverted',
+                size: 5,
+                hover: {
+                    size: 6
+                }
+            },
+            xaxis: {
+                categories: [labinfo0.createTime, labinfo1.createTime, labinfo2.createTime, labinfo3.createTime, labinfo4.createTime, labinfo5.createTime, labinfo6.createTime]
+            },
+            yaxis: {
+                title: {
+                    text: 'RH%'
+                },
+                min: 0,
+                max: 90
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                floating: true,
+                offsetY: -25,
+                offsetX: -5
+            },
+            responsive: [{
+                breakpoint: 600,
+                options: {
+                    chart: {
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    legend: {
+                        show: false
+                    }
+                }
+            }]
+        };
+
+        new ApexCharts(
+            document.querySelector("#lineChartDatalabels01"),
+            lineChartDatalabelsOptions01
+        ).render();
+
+
+    });
+</script>

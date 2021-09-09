@@ -1,0 +1,283 @@
+<style>
+    #febs-chemistry xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-chemistry xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-chemistry" lay-title="试剂管理">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="chemistry-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <!--                                    <div class="layui-inline">-->
+                                    <!--                                        <label class="layui-form-label layui-form-label-sm">试剂名</label>-->
+                                    <!--                                        <div class="layui-input-inline">-->
+                                    <!--                                            <input type="text" name="chemistryname" autocomplete="off" class="layui-input">-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
+                                    <!--                                    <div class="layui-inline">-->
+                                    <!--                                        <label class="layui-form-label layui-form-label-sm">申请时间</label>-->
+                                    <!--                                        <div class="layui-input-inline">-->
+                                    <!--                                            <input type="text" name="time" id="chemistry-createTime" class="layui-input">-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">申请状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="status">
+                                                <option value=""></option>
+                                                <option value="0">未通过</option>
+                                                <option value="1">审核中</option>
+                                                <option value="2">已通过</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="chemistry:add,chemistry:update,chemistry:password:reset,chemistry:export">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="chemistryTable" lay-data="{id: 'chemistryTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="ask-status">
+    {{#
+    let status = {
+    2: {title: '已通过', color: 'green'},
+    1: {title: '审核中', color: 'blue'},
+    0: {title: '未通过', color: 'volcano'}
+    }[d.status];
+    }}
+    <span class="layui-badge febs-bg-{{status.color}}">{{ status.title }}</span>
+</script>
+
+<script type="text/html" id="chemistry-option">
+    <span shiro:lacksPermission="ask:ok,ask:refuse,ask:delete,ask:back">
+       <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="oaAsk" shiro:hasPermission="ask:ok"><i
+            class="layui-icon febs-edit-area febs-green">&#xe889;</i></a>
+    <a lay-event="refuseAsk" shiro:hasPermission="ask:refuse"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe88c;</i></a>
+    <a lay-event="del" shiro:hasPermission="ask:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+    <a lay-event="del" shiro:hasPermission="ask:back"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdown', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdown = layui.dropdown,
+            $view = $('#febs-chemistry'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            createTimeFrom,
+            createTimeTo;
+        //deptXmlSelect;
+
+        form.render();
+
+        initTable();
+
+        laydate.render({
+            elem: '#chemistry-createTime',
+            range: true,
+            trigger: 'click'
+        });
+
+        dropdown.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('chemistryTable');
+                if (name === 'refuse') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择拒绝通过的申请');
+                    } else {
+                        febs.modal.confirm('拒绝申请', '确定拒绝该申请？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            refuseasks(ids.join(','));
+                        });
+                    }
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的申请');
+                    } else {
+                        febs.modal.confirm('删除申请', '确定删除该申请？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteIds(ids.join(','));
+                        });
+                    }
+                }
+                if (name === 'back') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的申请');
+                    } else {
+                        febs.modal.confirm('删除申请', '确定删除该申请？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteIds(ids.join(','));
+                        });
+                    }
+                }
+                if (name === 'ok') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择同意通过的申请');
+                    } else {
+                        febs.modal.confirm('通过申请', '确定通过该申请？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            okasks(ids.join(','));
+                        });
+                    }
+                }
+                //SELECT * FROM t_monitor WHERE DATE(CREATE_TIME) = CURDATE();只查今天的日期
+            },
+            options: [{
+                name: 'delete',
+                title: '删除申请'
+
+            }]
+        });
+
+
+        table.on('tool(chemistryTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+
+            if (layEvent === 'okAsk') {
+                febs.modal.confirm('同意申请', '确定同意该申请？', function () {
+                    okasks(data.id);
+                });
+            }
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除申请', '确定删除该申请？', function () {
+                    deleteIds(data.id);
+                });
+            }
+            if (layEvent === 'refuseAsk') {
+                febs.modal.confirm('拒绝申请', '确定拒绝该申请？', function () {
+                    refuseasks(data.id);
+                });
+            }
+
+        });
+
+        table.on('sort(chemistryTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            sortObject.type = 'null';
+            createTimeTo = null;
+            createTimeFrom = null;
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+
+        function initTable() {
+
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'chemistryTable',
+                url: ctx + 'Ask/myasklist',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field: 'username', title: '申请人', minWidth: 100},
+                    {field: 'chemistryName', title: '试剂名', minWidth: 100},
+                    {field: 'description', title: '申请理由', minWidth: 180},
+                    {field: 'createTime', title: '申请时间', minWidth: 100, sort: true},
+                    {title: '申请状态', templet: '#ask-status'},
+                    {title: '操作', toolbar: '#chemistry-option', minWidth: 140}
+                ]]
+            });
+        }
+
+        function getQueryParams(flag) {
+
+            let params = $searchForm.serializeJson();
+            let createTime = params.time;
+            if (createTime) {
+                createTimeFrom = createTime.split(' - ')[0];
+                createTimeTo = createTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.createTimeFrom = createTimeFrom;
+            params.createTimeTo = createTimeTo;
+            return params;
+        }
+
+        function deleteIds(ids) {
+
+            febs.get(ctx + 'Ask/deleteask/' + ids, null, function () {
+                febs.alert.success('删除试剂申请');
+                $query.click();
+            });
+        }
+
+
+        function okasks(id) {
+            febs.get(ctx + 'Ask/ok/' + id, null, function () {
+                febs.alert.success('通过成功');
+                $query.click();
+            });
+        }
+        function refuseasks(id) {
+            febs.get(ctx + 'Ask/refuse/' + id, null, function () {
+                febs.alert.success('拒绝成功');
+                $query.click();
+            });
+        }
+    })
+</script>

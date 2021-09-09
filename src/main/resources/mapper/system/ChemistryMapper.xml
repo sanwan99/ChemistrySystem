@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.ChemistryMapper">
+<!--    <sql id="countChemistryDetailSql" >-->
+<!--        SELECT-->
+<!--        COUNT(1)-->
+<!--        FROM-->
+<!--        t_chemistry u-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="chemistry.chemistryname != null and chemistry.chemistryname != ''">-->
+<!--            AND u.chemistryname = #{chemistry.chemistryname}-->
+<!--        </if>-->
+<!--        <if test="chemistry.sex != null and chemistry.sex != ''">-->
+<!--            AND u.ssex = #{chemistry.sex}-->
+<!--        </if>-->
+<!--        <if test="chemistry.status != null and chemistry.status != ''">-->
+<!--            AND u.status = #{chemistry.status}-->
+<!--        </if>-->
+<!--        <if test="chemistry.temperature != null and chemistry.temperature != ''">-->
+<!--            AND u.temperature = #{chemistry.temperature}-->
+<!--        </if>-->
+<!--        <if test="chemistry.createTimeFrom != null and chemistry.createTimeFrom !=''">-->
+<!--            And u.create_time &gt; #{chemistry.createTimeFrom}-->
+<!--        </if>-->
+<!--        <if test="chemistry.createTimeTo!= null and chemistry.createTimeTo !=''">-->
+<!--            And u.create_time &lt; #{chemistry.createTimeTo}-->
+<!--        </if>-->
+<!--    </sql>-->
+
+<!--    <sql id="findChemistryDetailSql">-->
+<!--        SELECT-->
+<!--        u.chemistry_id chemistryId,-->
+<!--        u.chemistryname,-->
+<!--        u.humidty,-->
+<!--        u.temperature,-->
+<!--        u.capacity,-->
+<!--        u.status,-->
+<!--        u.create_time createTime,-->
+<!--        u.ssex sex,-->
+<!--        u.modify_time modifyTime,-->
+<!--        u.description,-->
+<!--        u.avatar-->
+<!--        FROM-->
+<!--        t_chemistry u-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="chemistry.chemistryname != null and chemistry.chemistryname != ''">-->
+<!--            AND u.chemistryname = #{chemistry.chemistryname}-->
+<!--        </if>-->
+<!--        <if test="chemistry.sex != null and chemistry.sex != ''">-->
+<!--            AND u.ssex = #{chemistry.sex}-->
+<!--        </if>-->
+<!--        <if test="chemistry.status != null and chemistry.status != ''">-->
+<!--            AND u.status = #{chemistry.status}-->
+<!--        </if>-->
+<!--        <if test="chemistry.temperature != null and chemistry.temperature != ''">-->
+<!--            AND u.temperature = #{chemistry.temperature}-->
+<!--        </if>-->
+<!--        <if test="chemistry.createTimeFrom != null and chemistry.createTimeFrom !=''">-->
+<!--            And u.create_time &gt; #{chemistry.createTimeFrom}-->
+<!--        </if>-->
+<!--        <if test="chemistry.createTimeTo!= null and chemistry.createTimeTo !=''">-->
+<!--            And u.create_time &lt; #{chemistry.createTimeTo}-->
+<!--        </if>-->
+<!--        GROUP BY-->
+<!--        u.chemistryname,-->
+<!--        u.chemistry_id,-->
+<!--        u.humidty,-->
+<!--        u.temperature,-->
+<!--        u.capacity,-->
+<!--        u.status,-->
+<!--        u.create_time,-->
+<!--        u.ssex,-->
+<!--        u.modify_time,-->
+<!--        u.description,-->
+<!--        u.avatar-->
+<!--    </sql>-->
+    <sql id="countChemistryDetailSql" >
+        SELECT
+        COUNT(1)
+        FROM
+        t_user_chemistry u
+        WHERE u.user_id = #{id}
+
+    </sql>
+    <sql id="findChemistryDetailSql">
+	   SELECT
+	    u.chemistry_id chemistryId,
+        u.chemistryname,
+        u.humidty,
+        u.temperature,
+        u.capacity,
+        uc.status,
+        u.create_time createTime,
+        u.ssex sex,
+        u.modify_time modifyTime,
+        u.description,
+        u.avatar
+        FROM
+        t_chemistry u
+        LEFT JOIN t_user_chemistry uc ON (u.chemistry_id = uc.chemistry_id)
+        WHERE  uc.user_id = #{id}
+        <if test="chemistry.chemistryname != null and chemistry.chemistryname != ''">
+            AND u.chemistryname = #{chemistry.chemistryname}
+        </if>
+        <if test="chemistry.sex != null and chemistry.sex != ''">
+            AND u.ssex = #{chemistry.sex}
+        </if>
+        <if test="chemistry.status != null and chemistry.status != ''">
+            AND uc.status = #{chemistry.status}
+        </if>
+        <if test="chemistry.temperature != null and chemistry.temperature != ''">
+            AND u.temperature = #{chemistry.temperature}
+        </if>
+        <if test="chemistry.createTimeFrom != null and chemistry.createTimeFrom !=''">
+            And u.create_time &gt; #{chemistry.createTimeFrom}
+        </if>
+        <if test="chemistry.createTimeTo!= null and chemistry.createTimeTo !=''">
+            And u.create_time &lt; #{chemistry.createTimeTo}
+        </if>
+        GROUP BY
+        u.chemistryname,
+        u.chemistry_id,
+        u.humidty,
+        u.temperature,
+        u.capacity,
+        uc.status,
+        u.create_time,
+        u.ssex,
+        u.modify_time,
+        u.description,
+        u.avatar
+    </sql>
+
+    <select id="countChemistryDetail" parameterType="long" resultType="long">
+        <include refid="countChemistryDetailSql"/>
+    </select>
+
+    <select id="findChemistryDetailPage" parameterType="long" resultType="chemistry">
+        <include refid="findChemistryDetailSql"/>
+    </select>
+
+    <select id="findChemistryDetail" parameterType="chemistry" resultType="chemistry">
+        <include refid="findChemistryDetailSql"/>
+    </select>
+
+    <select id="findByName" parameterType="string" resultType="chemistry">
+        SELECT
+        u.chemistry_id chemistryId,
+        u.chemistryname,
+        u.humidty,
+        u.temperature,
+        u.capacity,
+        u.status,
+        u.create_time createTime,
+        u.ssex sex,
+        u.modify_time modifyTime,
+        u.description,
+        u.avatar
+        FROM
+        t_chemistry u
+        WHERE  u.chemistryname = #{chemistryname}
+        GROUP BY
+            u.chemistryname,
+            u.chemistry_id,
+            u.humidty,
+            u.temperature,
+            u.capacity,
+            u.status,
+            u.create_time,
+            u.ssex,
+            u.modify_time,
+            u.description,
+            u.avatar
+    </select>
+
+<!--    <select id="findChemistryDataPermissions" parameterType="long" resultType="chemistryDataPermission">-->
+<!--        select chemistry_id chemistryId, dept_id deptId from t_chemistry_data_permission-->
+<!--        where chemistry_id = #{chemistryId}-->
+<!--    </select>-->
+</mapper>

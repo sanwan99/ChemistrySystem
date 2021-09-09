@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.monitor.mapper.LabMapper">
+
+    <sql id="findSevenDaysDate">
+          SELECT
+        u.lab_id labId,
+        u.humidty,
+        u.lhumidty,
+        u.temperature,
+        u.ltemperature,
+        u.create_time createTime
+        FROM
+        t_lab u
+        GROUP BY CREATE_TIME DESC
+	    LIMIT 7
+
+    </sql>
+
+    <select id="findLastSevenDaysDate" resultType="LabInfo">
+        <include refid="findSevenDaysDate"/>
+    </select>
+
+
+
+
+</mapper>

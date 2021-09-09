@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/sfjl.css" />
+    <script charset="utf-8" src="js/common/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <title>高血压随访记录表</title>
+
+</head>
+
+<body>
+<div id="box">
+    <div id="top" onclick="reBack()">
+
+        <img src="img/return@2x.png" id="img"/>
+        <div id="nav">
+            <p id="title">高血压随访记录表</p>
+        </div>
+    </div>
+    <div id="content">
+        
+        <!--块1-->
+        <div id="li-title">体征</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">血压</div>
+                <div id="con-r">左侧120mmHg ；右侧120mmHg</div>
+            </div>
+            <div id="con2">
+                <div id="con-l">体重</div>
+                <div id="con-r">60kg</div>
+            </div>
+        </div>
+        <!--块1-->
+
+        <div id="li-title">生活方式指导</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">日吸烟量</div>
+                <div id="con-r">1支</div>
+            </div>
+            <div id="con1">
+                <div id="con-l">日饮酒量</div>
+                <div id="con-r">1杯</div>
+            </div>
+            <div id="con1">
+                <div id="con-l">运动</div>
+                <div id="con-r">5次/周 ；120分钟/次</div>
+            </div>
+            <div id="con1">
+                <div id="con-l">主食</div>
+                <div id="con-r">清淡</div>
+            </div>
+            <div id="con1">
+                <div id="con-l">心理调整</div>
+                <div id="con-r">放松</div>
+            </div>
+            <div id="con1">
+                <div id="con-l">遵医行为</div>
+                <div id="con-r">较好</div>
+            </div>
+
+        </div>
+
+        <div id="li-title">药物不良反应</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">有</div>
+                <div id="con-r">青霉素</div>
+            </div>
+
+        </div>
+
+        <div id="li-title">此次随访分类</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">定期随访</div>
+            </div>
+
+        </div>
+
+
+        <div id="li-title">用药情况</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">阿莫西林</div>
+                <div id="con-r">每日1次 ；每次10mg</div>
+            </div>
+            <div id="con2">
+                <div id="con-l">阿莫西林</div>
+                <div id="con-r">每日1次 ；每次10mg</div>
+            </div>
+        </div>
+
+        <div id="li-title">下次随访日期</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">2020年2月1日</div>
+            </div>
+
+        </div>
+        <div id="li-title">随访医生</div>
+        <div id="l-con">
+            <div id="con1">
+                <div id="con-l">小明</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+<script charset="utf-8" src="js/urlParam.js" type="text/javascript"></script>
+<script>
+    function reBack(){
+        history.go(-1);
+    }
+    $(document).ready(function(){
+        
+        let id= UrlParam.paramValues("id");
+        if(id!=null&&id[0]!=null){
+            console.log(id); 
+		    var url="http://localhost:8083/rhmful";
+		    $.ajax({
+                type:"GET",    //请求方式
+                async:true,    //是否异步
+                url: url+"/gxysfjl/v1/info/"+id[0],
+                data:{},    //请求参数
+                beforeSend: function() {
+                    //请求前的处理
+                },
+                success: function(data) {
+                    let {result,code,message}=data;
+                    console.log(result,code,message)
+					if(code=="0"){
+						if(result!=undefined){
+                            let sfjl=result;
+                            let list=[
+                                {
+                                    title:'体征',
+                                    childs:[
+                                        {key:"症状",value:sfjl.hzzgzzxs},
+                                        {key:"收缩压",value:sfjl.ssy},
+                                        {key:"舒张压",value:sfjl.szy},
+                                        {key:"身高",value:sfjl.sg},
+                                        {key:"体重",value:sfjl.tz},
+                                        {key:"体质指数",value:sfjl.bmi},
+                                        {key:"体重控制建议",value:sfjl.tzkzjy},
+                                        {key:"体质指数建议",value:sfjl.bmijy},
+                                        {key:"腰围",value:sfjl.yw},
+                                    ]
+                                },{
+                                    title:'生活方式指导',
+                                    childs:[
+                                        {key:"吸烟情况",value:sfjl.xyqk},
+                                        {key:"日吸烟量",value:sfjl.xyl},
+                                        {key:"饮酒情况",value:sfjl.yjqk},
+                                        {key:"日饮酒量",value:sfjl.yjl},
+                                        {key:"饮酒种类",value:sfjl.yjlx},
+                                        {key:"运动情况",value:sfjl.ydqk},
+                                        {key:"主要运动方式",value:sfjl.zyydzl},
+                                        // {key:"主要运动方式其他详述",value:sfjl.zyydfs},
+                                        {key:"每周运动次数",value:sfjl.ydzcs},
+                                        {key:"每次运动时间",value:sfjl.ydcfz},
+                                        {key:"盐摄入量程度",value:sfjl.ysrlcd},
+                                        {key:"盐摄入量",value:sfjl.ysrl},
+                                        {key:"日吸烟量建议",value:sfjl.jyxyl},
+                                        {key:"日饮酒量建议",value:sfjl.jyyjl},
+                                    ]
+                                },{
+                                    title:'药物不良反应',
+                                    childs:[
+
+                                        // {key:"饮酒情况",value:sfjl.yjqk},
+                                        // {key:"日饮酒量",value:sfjl.yjl},
+                                        // {key:"饮酒种类",value:sfjl.yjlx},
+                                        // {key:"运动情况",value:sfjl.ydqk},
+                                        // {key:"主要运动方式",value:sfjl.zyydzl},
+                                        // {key:"主要运动方式其他详述",value:sfjl.zyydfs},
+                                        // {key:"每周运动次数",value:sfjl.ydzcs},
+                                        // {key:"每次运动时间",value:sfjl.ydcfz},
+                                        // {key:"盐摄入量程度",value:sfjl.ysrlcd},
+                                        // {key:"盐摄入量",value:sfjl.ysrl},
+                                        // {key:"日吸烟量建议",value:sfjl.jyxyl},
+                                        // {key:"日饮酒量建议",value:sfjl.jyyjl},
+                                    ]
+                                },{
+                                    title:'用药情况',
+                                    childs:[
+                                        // {key:"吸烟情况",value:sfjl.xyqk},
+                                        // {key:"日吸烟量",value:sfjl.xyl},
+                                        // {key:"饮酒情况",value:sfjl.yjqk},
+                                        // {key:"日饮酒量",value:sfjl.yjl},
+                                        // {key:"饮酒种类",value:sfjl.yjlx},
+                                        // {key:"运动情况",value:sfjl.ydqk},
+                                        // {key:"主要运动方式",value:sfjl.zyydzl},
+                                        // {key:"主要运动方式其他详述",value:sfjl.zyydfs},
+                                        // {key:"每周运动次数",value:sfjl.ydzcs},
+                                        // {key:"每次运动时间",value:sfjl.ydcfz},
+                                        // {key:"盐摄入量程度",value:sfjl.ysrlcd},
+                                        // {key:"盐摄入量",value:sfjl.ysrl},
+                                        // {key:"日吸烟量建议",value:sfjl.jyxyl},
+                                        // {key:"日饮酒量建议",value:sfjl.jyyjl},
+                                    ]
+                                },{
+                                    title:'下次随访日期',
+                                    childs:[
+                                         {key:sfjl.xcsfrq,value:""}
+                                    ]
+                                },{
+                                    title:'随访医生',
+                                    childs:[
+                                        {key:sfjl.sfysxm,value:""}
+                                    ]
+                                },
+
+                                
+                            ]
+                            let html="";
+							html+='<div id="head">'+
+                            '<div id="left-1">随访日期：<span>'+result.sfrq+'</span></div>'+
+                            '<div id="right-1">随访方式：<span>'+result.sffs+'</span></div>'+
+                            '</div>';
+							for(let i=0;i<list.length;i++){
+                                if(list[i].childs.length==0){
+                                    continue;
+                                }
+								html+='<div id="li-title">'+list[i].title+'</div><div id="l-con">';
+                                    for(let j=0;j<list[i].childs.length;j++){
+                                        if(list[i].childs[j].value!=null&&list[i].childs[j].value!=undefined){
+                                            html+='<div id="con1">'+
+                                            '<div id="con-l">'+list[i].childs[j].key+'</div>'+
+                                            '<div id="con-r">'+list[i].childs[j].value+'</div>'+
+                                            '</div>';
+                                        }
+                                    }
+                                    html+='</div>'
+							}
+                            console.log(html)
+							$("#content").html(html);
+						}
+					}
+                    // window.location.href='GxySfjl.html';
+                },
+                error: function(err) {
+                    // console.log(err)
+                    //请求出错处理
+                }
+            });
+        }
+	})
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<style>
+    #chemistry-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="chemistry-update">
+    <form class="layui-form" action="" lay-filter="chemistry-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">试剂id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="chemistryId" data-th-value="${chemistry.chemistryId}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">试剂名：</label>
+            <div class="layui-input-block">
+                <input type="text" name="chemistryname" minlength="1" maxlength="10" data-th-id="${chemistry.chemistryId}"
+                       lay-verify="range|chemistryname" autocomplete="off" class="layui-input" readonly >
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">温度：</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input type="text" name="temperature"  autocomplete="off" class="layui-input">-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">申请人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="humidty"  maxlength="50" autocomplete="off"
+                       class="layui-input" readonly>
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">容量：</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input type="text" name="capacity"  maxlength="50" autocomplete="off"-->
+<!--                       class="layui-input">-->
+<!--            </div>-->
+<!--        </div>-->
+        <!--        <div class="layui-form-item">-->
+        <!--            <label class="layui-form-label febs-form-item-require">角色：</label>-->
+        <!--            <div class="layui-input-block" id="chemistry-update-role"></div>-->
+        <!--        </div>-->
+        <!--        <div class="layui-form-item">-->
+        <!--            <label class="layui-form-label">类别：</label>-->
+        <!--            <div class="layui-input-block" id="chemistry-update-dept"></div>-->
+        <!--        </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">申请为：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="可用" readonly>
+                <input type="radio" name="status" value="0" title="禁用" readonly>
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label febs-form-item-require">固液：</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input type="radio" name="sex" value="0" title="固体">-->
+<!--                <input type="radio" name="sex" value="1" title="液体">-->
+<!--                <input type="radio" name="sex" value="2" title="未知">-->
+<!--            </div>-->
+<!--        </div>-->
+        <!--        <div class="layui-form-item">-->
+        <!--            <label class="layui-form-label">数据权限：</label>-->
+        <!--            <div class="layui-input-block" id="chemistry-update-data-permission"></div>-->
+        <!--        </div>-->
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">申请理由：</label>
+            <div class="layui-input-block">
+                <textarea name="description" maxlength="100" class="layui-textarea">
+                </textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="chemistry-update-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'xmSelect', 'validate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            xmSelect = layui.xmSelect,
+            chemistry = [[${chemistry}]],
+            validate = layui.validate,
+            dataPermissionXmlSelect,
+            roleXmSelect,
+            deptXmlSelect;
+
+        form.verify(validate);
+        form.render();
+
+        initChemistryValue();
+
+
+
+        function initChemistryValue() {
+
+            form.val("chemistry-update-form", {
+                "chemistryname": chemistry.chemistryname,
+                // "temperature": chemistry.temperature,
+                 "humidty": currentUser.username,
+
+                // "capacity": chemistry.capacity,
+                 "status": chemistry.status,
+                // "sex": chemistry.sex,
+                "description": '请输入申请理由'
+            });
+        }
+
+        form.on('submit(chemistry-update-form-submit)', function (data) {
+
+            if (febs.nativeEqual(data.field, chemistry)) {
+
+                febs.alert.warn('不能提交空的申请！！');
+                return false;
+            }
+            febs.post(ctx + 'Ask/ask', data.field, function () {
+                layer.closeAll();
+                febs.alert.success(chemistry.chemistryname + ' 试剂申请已经发出啦');
+                $('#febs-chemistry').find('#query').click();
+            });
+            return false;
+        });
+
+    });
+</script>

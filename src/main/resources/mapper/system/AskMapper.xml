@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.monitor.mapper.AskMapper">
+    <sql id="countAskDetailSql" >
+        SELECT
+        COUNT(1)
+        FROM
+        t_ask u
+        WHERE 1 = 1
+        <if test="askInfo.chemistryname != null and askInfo.chemistryname != ''">
+            AND u.chemistryname = #{askInfo.chemistryname}
+        </if>
+        <if test="askInfo.status != null and askInfo.status != ''">
+            AND u.status = #{askInfo.status}
+        </if>
+    </sql>
+
+    <sql id="findAskDetailPageSql">
+        SELECT
+        u.id,
+        u.chemistry_id chemistryId,
+        u.chemistryname,
+        u.status,
+        u.create_time createTime,
+        u.description,
+        u.username
+        FROM
+        t_ask u
+        WHERE 1 = 1
+        <if test="askInfo.chemistryname != null and askInfo.chemistryname != ''">
+            AND u.chemistryname = #{askInfo.chemistryname}
+        </if>
+        <if test="askInfo.status != null and askInfo.status != ''">
+            AND u.status = #{askInfo.status}
+        </if>
+        GROUP BY
+        u.id,
+        u.chemistryname,
+        u.chemistry_id,
+        u.status,
+        u.create_time,
+        u.description,
+        u.username
+    </sql>
+
+    <sql id="findmyAskDetailPageSql">
+        SELECT
+        u.id,
+        u.chemistry_id chemistryId,
+        u.chemistryname,
+        u.status,
+        u.create_time createTime,
+        u.description,
+        u.username
+        FROM
+        t_ask u
+        WHERE u.username = #{username}
+        GROUP BY
+        u.id,
+        u.chemistryname,
+        u.chemistry_id,
+        u.status,
+        u.create_time,
+        u.description,
+        u.username
+    </sql>
+
+    <select id="countAskDetail" parameterType="askInfo" resultType="long">
+        <include refid="countAskDetailSql"/>
+    </select>
+
+    <select id="findAskDetailPage" parameterType="askInfo" resultType="askInfo">
+        <include refid="findAskDetailPageSql"/>
+    </select>
+
+    <select id="findmyAskDetailPage" parameterType="string" resultType="askInfo">
+        <include refid="findmyAskDetailPageSql"/>
+    </select>
+
+
+</mapper>
