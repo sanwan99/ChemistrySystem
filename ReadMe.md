@@ -2,12 +2,6 @@
 
 
 
-演示环境账号密码：
-
-账号 | 密码| 权限
----|---|---
-scott | 1234qwer | 注册账户，拥有查看，新增权限（新增用户除外）和导出Excel权限
-
 
 本地部署账号密码：
 sanwan
@@ -20,9 +14,13 @@ sanwan
 │  ├─用户管理
 │  ├─角色管理
 │  ├─菜单管理
+│  ├─试剂管理
+│  ├─审批管理（管理员角色）
+│  ├─我的审批（学生角色）
 │  └─部门管理
 ├─系统监控
 │  ├─在线用户
+│  ├─实验室监控
 │  ├─系统日志
 │  ├─登录日志
 │  ├─请求追踪
@@ -30,22 +28,7 @@ sanwan
 │  │  ├─JVM信息
 │  │  ├─TOMCAT信息
 │  │  └─服务器信息
-├─任务调度
-│  ├─定时任务
-│  └─调度日志
-├─代码生成
-│  ├─生成配置
-│  ├─代码生成
-└─其他模块
-   ├─FEBS组件
-   │  ├─表单组件
-   │  ├─表单组合
-   │  ├─FEBS工具
-   │  ├─系统图标
-   │  └─其他组件
-   ├─APEX图表
-   ├─高德地图
-   └─导入导出
+
 ```
 ### 系统特点
 
@@ -61,25 +44,11 @@ sanwan
 
 6. 用户权限动态刷新
 
-7. 浏览器兼容性好，页面支持PC，Pad和移动端。
+7. 引入plumelog日志分析系统 可在logback-xml中研究
 
 8. 代码简单，结构清晰
 
-### 技术选型
+9.可引入ElasticSearch Logstash Kibana 在前端页面修改 自行研究
 
-#### 后端
-- [Spring Boot 2.4.2](http://spring.io/projects/spring-boot/)
-- [Mybatis-Plus](https://mp.baomidou.com/guide/)
-- [MySQL 5.7.x](https://dev.mysql.com/downloads/mysql/5.7.html#downloads)
-- [Hikari](https://brettwooldridge.github.io/HikariCP/)
-- [Redis](https://redis.io/)
-- [Shiro 1.6.0](http://shiro.apache.org/)
-
-#### 前端
-- [Layui 2.5.7](https://www.layui.com/)
-- [Nepadmin](https://gitee.com/june000/nep-admin)
-- [eleTree 树组件](https://layuiextend.hsianglee.cn/eletree/)
-- [xm-select](https://gitee.com/maplemei/xm-select)
-- [Apexcharts图表](https://apexcharts.com/)
 
 
